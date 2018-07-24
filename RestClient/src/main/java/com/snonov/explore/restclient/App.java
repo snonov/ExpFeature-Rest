@@ -1,6 +1,7 @@
 package com.snonov.explore.restclient;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import feign.Feign;
 import feign.form.FormData;
+import feign.form.FormEncoder;
 import feign.gson.GsonDecoder;
 import feign.gson.GsonEncoder;
 import feign.okhttp.OkHttpClient;
@@ -70,7 +72,7 @@ public class App {
 			                System.out.println();
 			            }
 			        })
-				  .encoder(new GsonEncoder())
+				  .encoder(new FormEncoder(new GsonEncoder()))
 				  .decoder(new GsonDecoder())
 				  .target(ServerClient.class, "http://localhost:8080/api/");
 
@@ -80,7 +82,7 @@ public class App {
 		String inputValue = "MyInputValue";
 		boolean isOk = false;
 		
-		String fileName = "C:\\DevSnoNov\\DevWorking\\ProjectSourcesGit\\ExpFeature-Rest\\RestClient\\src\\main\\resources\\app.py";
+		String fileName = new File(".").getAbsolutePath() + "\\src\\main\\resources\\app.py";
 		Path path = Paths.get(fileName);
 		byte[] myDataAsByteArray = null;
 		try {
@@ -89,9 +91,9 @@ public class App {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		FormData formData = new FormData("application/octet-stream", myDataAsByteArray);
-	    //text/plain
-		serverClient3.testPost(spaceName, inputName, inputValue, isOk, formData);
+		FormData formData = new FormData("text/plain", myDataAsByteArray);
+	    //text/plain application/octet-stream
+		serverClient3.testPost(spaceName, formData, inputName, inputValue, isOk);
 		LOGGER.info("Server response ");
 		
 	}

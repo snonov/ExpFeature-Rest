@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Path("/hello")
+@Consumes({MediaType.MULTIPART_FORM_DATA})
 public class HelloResource {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(HelloResource.class);
@@ -42,10 +43,13 @@ public class HelloResource {
 	@Path("/Test/{spaceName}/MyQuery")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public void testPostUrl(@PathParam("spaceName") String spaceName, @QueryParam("inputName") String inputName,
-			@QueryParam("inputValue") String inputValue, @QueryParam("isOk") boolean isOk,
+	public void testPostUrl(@PathParam("spaceName") String spaceName, 
 			@FormDataParam("file") InputStream fileInputStream,
-			@FormDataParam("file") FormDataContentDisposition fileDetail) {
+			@FormDataParam("file") FormDataContentDisposition fileDetail,
+			@QueryParam("inputName") String inputName,
+			@QueryParam("inputValue") String inputValue, 
+			@QueryParam("isOk") boolean isOk
+			) {
 
 		LOGGER.info("Path param");
 		LOGGER.info("spaceName [{}]", spaceName);
@@ -56,7 +60,7 @@ public class HelloResource {
 
 		try {
 			String fileLocation = new File(".").getAbsolutePath();
-			FileOutputStream out = new FileOutputStream(new File(fileLocation + "/" + fileDetail.getFileName()));
+			FileOutputStream out = new FileOutputStream(new File(fileLocation + "//target//UploadedFile.txt"));
 			int read = 0;
 			byte[] bytes = new byte[1024];
 			while ((read = fileInputStream.read(bytes)) != -1) {
@@ -64,7 +68,7 @@ public class HelloResource {
 			}
 			out.flush();
 			out.close();
-			String output = "File successfully uploaded to : " + fileLocation;
+			String output = "File UploadedFile.txt successfully uploaded to : " + fileLocation;
 			LOGGER.info(output);
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -17,10 +17,10 @@ public interface ServerClient {
     @RequestLine("POST hello/Test/{spaceName}/MyQuery?inputName={inputName}&inputValue={inputValue}&isOk={isOk}")
     @Headers("Content-Type: multipart/form-data")
     void testPost(@Param("spaceName") String spaceName,
+    		@Param("file") FormData file,
     		@Param("inputName") String inputName, 
     		@Param("inputValue") String inputValue, 
-    		@Param("isOk") boolean isOk,
-    		@Param("file") FormData file
+    		@Param("isOk") boolean isOk    		
     		);
     
 }

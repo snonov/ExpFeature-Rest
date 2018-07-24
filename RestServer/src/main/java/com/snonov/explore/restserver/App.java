@@ -1,5 +1,7 @@
 package com.snonov.explore.restserver;
 
+import javax.servlet.MultipartConfigElement;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -18,7 +20,7 @@ public class App {
 	public static void main(String[] args) {
 
 		Server server = new Server(8080);
-
+		
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
 
         servletContextHandler.setContextPath("/");
@@ -26,8 +28,9 @@ public class App {
 
         ServletHolder servletHolder = servletContextHandler.addServlet(ServletContainer.class, "/api/*");
         servletHolder.setInitOrder(0);
-        servletHolder.setInitParameter("jersey.config.server.provider.packages","com.snonov.explore.restserver.restproduce"
-        );
+        servletHolder.setInitParameter("jersey.config.server.provider.packages","com.snonov.explore.restserver.restproduce");
+        servletHolder.setInitParameter("jersey.config.server.provider.classnames","org.glassfish.jersey.media.multipart.MultiPartFeature");
+        servletHolder.getRegistration().setMultipartConfig(new MultipartConfigElement("C:\\DevSnoNov", 1048576, 1048576, 262144));
 
         try {
             server.start();

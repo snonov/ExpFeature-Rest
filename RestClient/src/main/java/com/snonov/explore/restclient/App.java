@@ -1,10 +1,16 @@
 package com.snonov.explore.restclient;
 
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import feign.Feign;
+import feign.form.FormData;
 import feign.gson.GsonDecoder;
 import feign.gson.GsonEncoder;
 import feign.okhttp.OkHttpClient;
@@ -55,22 +61,39 @@ public class App {
 		
 		ServerClient serverClient3 = Feign.builder()
 				  .client(new OkHttpClient())
+			      .logLevel(feign.Logger.Level.FULL)
+			      .logger(new feign.Logger() { // implements Feign abstract Logger
+			            @Override
+			            protected void log(String configKey, String format, Object... args) {
+			                System.out.printf("[%s] ", configKey);
+			                System.out.printf(format, args);
+			                System.out.println();
+			            }
+			        })
 				  .encoder(new GsonEncoder())
 				  .decoder(new GsonDecoder())
-				  .logger(new Slf4jLogger(ServerClient.class))
-				  .logLevel(feign.Logger.Level.FULL)
 				  .target(ServerClient.class, "http://localhost:8080/api/");
-		
+
 		LOGGER.info("serverClient.testPost");
 		String spaceName = "mySpaceName";
 		String inputName = "MyInputName";
 		String inputValue = "MyInputValue";
 		boolean isOk = false;
-		serverClient3.testPost(spaceName, inputName, inputValue, isOk);
+		
+		String fileName = "C:\\DevSnoNov\\DevWorking\\ProjectSourcesGit\\ExpFeature-Rest\\RestClient\\src\\main\\resources\\app.py";
+		Path path = Paths.get(fileName);
+		byte[] myDataAsByteArray = null;
+		try {
+			myDataAsByteArray = Files.readAllBytes(path);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		FormData formData = new FormData("application/octet-stream", myDataAsByteArray);
+	    //text/plain
+		serverClient3.testPost(spaceName, inputName, inputValue, isOk, formData);
 		LOGGER.info("Server response ");
 		
 	}
-	
-	
-	
+
 }
